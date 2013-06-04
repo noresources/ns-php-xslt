@@ -84,6 +84,7 @@ class XSLTProcessor
 			$doc->load($filepath);
 			$xpath = new \DOMXPath($doc);
 			$xpath->registerNamespace(XSLT_PREFIX, XSLT_NS);
+			$dirname = dirname(realpath($filepath));
 
 			$xslXPath = new \DOMXPath($this->xsl);
 			$registeredNamespaces = $xslXPath->query("namespace::*", $this->xsl->documentElement);
@@ -111,7 +112,24 @@ class XSLTProcessor
 				$this->xsl->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/' ,'xmlns' . $p, $n->nodeValue);
 			}
 
-			$res = $xpath->query("xsl:import|xsl:variable|xsl:param", $doc->documentElement);
+			$res = $xpath->query("xsl:import", $doc->documentElement);
+			foreach ($res as $n)
+			{
+				$n = $this->xsl->importNode($n);
+				if ($this->xslFirstTemplateNode)
+				{
+					$this->xslFirstTemplateNode->parentNode->insertBefore($n, $this->xslFirstTemplateNode);
+				}
+				else
+				{
+					$this->xsl->documentElement->appendChild($n);
+				}
+				
+				$href = $dirname . "/" . $n->getAttribute("href");
+				$n->setAttribute("href", $href);
+			}
+			
+			$res = $xpath->query("xsl:variable|xsl:param", $doc->documentElement);
 			foreach ($res as $n)
 			{
 				$n = $this->xsl->importNode($n);
