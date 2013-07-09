@@ -1,39 +1,40 @@
 <?php
+
 /**
  * Copyright © 2012 by Renaud Guillard (dev@nore.fr)
  * Distributed under the terms of the MIT License, see LICENSE
  */
 
 /**
- * @package DOM
+ *
+ * @package XSLT
  */
-
 namespace NoreSources\XSLT;
 
-use NoreSources as ns;
 use \DOMDocument;
 use \DOMNode;
 
 const XSLT_NS = "http://www.w3.org/1999/XSL/Transform";
 const XSLT_PREFIX = "xsl";
 
-/// Extension of the PHP XSLTProcessor class
+// / Extension of the PHP XSLTProcessor class
 class XSLTProcessor
 {
+
 	public function __construct($filepath = null)
 	{
-		$this->processor = new \XSLTProcessor;
-
+		$this->processor = new \XSLTProcessor();
+		
 		if (file_exists($filepath))
 		{
 			$this->importStylesheet($filepath);
 		}
 		else
 		{
-			$impl = new \DOMImplementation;
+			$impl = new \DOMImplementation();
 			$this->xsl = $impl->createDocument(XSLT_NS, null);
 			$root = $this->xsl->createElementNS(XSLT_NS, XSLT_PREFIX . ":stylesheet");
-			$root->setAttributeNS('http://www.w3.org/2000/xmlns/' ,'xmlns:'. XSLT_PREFIX, XSLT_NS);
+			$root->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . XSLT_PREFIX, XSLT_NS);
 			$root->setAttribute("version", "1.0");
 			$this->xsl->appendChild($root);
 			$this->xslFirstTemplateNode = null;
@@ -42,26 +43,28 @@ class XSLTProcessor
 
 	/**
 	 * Override currently imported stylesheets
-	 * @param \DOMNode $node
+	 *
+	 * @param \DOMNode $node        	
 	 */
 	public function importStylesheet(\DOMNode $node)
 	{
 		$this->xslFirstTemplateNode = null;
 		$this->xsl = $node;
-
+		
 		$xpath = new \DOMXPath($this->xsl);
 		$xpath->registerNamespace(XSLT_PREFIX, XSLT_NS);
-
+		
 		$res = $xpath->query("xsl:template[1]", $this->xsl->documentElement);
 		if ($res->length)
 		{
 			$this->xslFirstTemplateNode = $res->item(0);
 		}
 	}
-
-	/// Append stylesheet elements
+	
+	// / Append stylesheet elements
 	/**
-	 * @param string $filepath
+	 *
+	 * @param string $filepath        	
 	 */
 	public function appendStylesheet($filepath, $useImport = false)
 	{
@@ -80,20 +83,20 @@ class XSLTProcessor
 		}
 		else
 		{
-			$doc = new DOMDocument;
+			$doc = new DOMDocument();
 			$doc->load($filepath);
 			$xpath = new \DOMXPath($doc);
 			$xpath->registerNamespace(XSLT_PREFIX, XSLT_NS);
 			$dirname = dirname(realpath($filepath));
-
+			
 			$xslXPath = new \DOMXPath($this->xsl);
 			$registeredNamespaces = $xslXPath->query("namespace::*", $this->xsl->documentElement);
-
+			
 			$res = $xpath->query("namespace::*", $doc->documentElement);
 			foreach ($res as $n)
 			{
 				$p = (strlen($n->prefix)) ? ":" . $n->prefix : "";
-
+				
 				$skip = false;
 				foreach ($registeredNamespaces as $ns)
 				{
@@ -103,16 +106,16 @@ class XSLTProcessor
 						break;
 					}
 				}
-
+				
 				if ($skip)
 				{
 					continue;
 				}
-
-				$this->xsl->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/' ,'xmlns' . $p, $n->nodeValue);
+				
+				$this->xsl->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns' . $p, $n->nodeValue);
 			}
-
-			$res = $xpath->query("xsl:import", $doc->documentElement);
+			
+			$res = $xpath->query("xsl:import|xsl:include", $doc->documentElement);
 			foreach ($res as $n)
 			{
 				$n = $this->xsl->importNode($n);
@@ -142,7 +145,7 @@ class XSLTProcessor
 					$this->xsl->documentElement->appendChild($n);
 				}
 			}
-
+			
 			$res = $xpath->query("xsl:template", $doc->documentElement);
 			foreach ($res as $n)
 			{
@@ -174,7 +177,8 @@ class XSLTProcessor
 	}
 
 	/**
-	 * @param DOMNode $nodes
+	 *
+	 * @param DOMNode $nodes        	
 	 * @return DOMDocument
 	 */
 	public function transformToDoc(DOMNode $nodes)
@@ -184,7 +188,8 @@ class XSLTProcessor
 	}
 
 	/**
-	 * @param DOMNode $nodes
+	 *
+	 * @param DOMNode $nodes        	
 	 * @return string
 	 */
 	public function transformToXML(DOMNode $nodes)
@@ -199,15 +204,17 @@ class XSLTProcessor
 	}
 
 	/**
+	 *
 	 * @var DOMDocument
 	 */
 	private $xsl;
 
 	private $xslFirstTemplateNode;
-	
+
 	private $xslOutputNode;
 
 	/**
+	 *
 	 * @var \XSLTProcessor
 	 */
 	private $processor;
