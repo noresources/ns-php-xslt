@@ -6,6 +6,7 @@
  */
 
 /**
+ *
  * @package XSLT
  */
 namespace NoreSources\XSLT;
@@ -17,6 +18,7 @@ const VERSION_PATCH = 0;
 /**
  * Version string of NoreSources XSLT module.
  * The version string can be used with the PHP function version_compare()
+ * 
  * @return XSLT module version
  */
 function version_string()
@@ -28,5 +30,17 @@ function version_number()
 {
 	return (VERSION_MAJOR * 10000 + VERSION_MINOR * 100 + VERSION_PATCH);
 }
+
+/**
+ * Location of the XSLT schema 
+ * @var string
+ */
+const XSLT_NAMESPACE_URI = "http://www.w3.org/1999/XSL/Transform";
+
+/**
+ * Default namespace used for XSLT stylesheets
+ * @var string
+ */
+const XSLT_NAMESPACE_PREFIX = "xsl";
 
 ?>

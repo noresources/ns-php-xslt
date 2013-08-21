@@ -14,10 +14,11 @@ namespace NoreSources\XSLT;
 use \DOMDocument;
 use \DOMNode;
 
-const XSLT_NS = "http://www.w3.org/1999/XSL/Transform";
-const XSLT_PREFIX = "xsl";
+require_once ("xslt.php");
 
-// / Extension of the PHP XSLTProcessor class
+/**
+ * Extension of the PHP XSLTProcessor class
+ */
 class XSLTProcessor
 {
 
@@ -32,9 +33,9 @@ class XSLTProcessor
 		else
 		{
 			$impl = new \DOMImplementation();
-			$this->xsl = $impl->createDocument(XSLT_NS, null);
-			$root = $this->xsl->createElementNS(XSLT_NS, XSLT_PREFIX . ":stylesheet");
-			$root->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . XSLT_PREFIX, XSLT_NS);
+			$this->xsl = $impl->createDocument(XSLT_NAMESPACE_URI, null);
+			$root = $this->xsl->createElementNS(XSLT_NAMESPACE_URI, XSLT_NAMESPACE_PREFIX . ":stylesheet");
+			$root->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . XSLT_NAMESPACE_PREFIX, XSLT_NAMESPACE_URI);
 			$root->setAttribute("version", "1.0");
 			$this->xsl->appendChild($root);
 			$this->xslFirstTemplateNode = null;
@@ -52,7 +53,7 @@ class XSLTProcessor
 		$this->xsl = $node;
 		
 		$xpath = new \DOMXPath($this->xsl);
-		$xpath->registerNamespace(XSLT_PREFIX, XSLT_NS);
+		$xpath->registerNamespace(XSLT_NAMESPACE_PREFIX, XSLT_NAMESPACE_URI);
 		
 		$res = $xpath->query("xsl:template[1]", $this->xsl->documentElement);
 		if ($res->length)
@@ -70,7 +71,7 @@ class XSLTProcessor
 	{
 		if ($useImport)
 		{
-			$import = $this->xsl->createElementNS(XSLT_NS, "import");
+			$import = $this->xsl->createElementNS(XSLT_NAMESPACE_URI, "import");
 			$import->setAttribute("href", $filepath);
 			if ($this->xslFirstTemplateNode)
 			{
@@ -86,7 +87,7 @@ class XSLTProcessor
 			$doc = new DOMDocument();
 			$doc->load($filepath);
 			$xpath = new \DOMXPath($doc);
-			$xpath->registerNamespace(XSLT_PREFIX, XSLT_NS);
+			$xpath->registerNamespace(XSLT_NAMESPACE_PREFIX, XSLT_NAMESPACE_URI);
 			$dirname = dirname(realpath($filepath));
 			
 			$xslXPath = new \DOMXPath($this->xsl);
