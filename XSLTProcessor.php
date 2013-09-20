@@ -62,9 +62,8 @@ class XSLTProcessor
 		}
 	}
 	
-	// / Append stylesheet elements
 	/**
-	 *
+	 * Append stylesheet elements
 	 * @param string $filepath        	
 	 */
 	public function appendStylesheet($filepath, $useImport = false)

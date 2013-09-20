@@ -32,7 +32,7 @@ function version_number()
 }
 
 /**
- * Location of the XSLT schema 
+ * Location of the XSLT structure 
  * @var string
  */
 const XSLT_NAMESPACE_URI = "http://www.w3.org/1999/XSL/Transform";
