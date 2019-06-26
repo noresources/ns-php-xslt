@@ -77,7 +77,7 @@ class XSLTStylesheet
 	public function __call($method, $args)
 	{
 		$allowedMethods = array (
-				"saveXML"
+				'saveXML'
 		);
 
 		if (in_array($method, $allowedMethods))
@@ -101,13 +101,13 @@ class XSLTStylesheet
 	public function __get($member)
 	{
 		$allowedMember = array (
-				"documentElement",
-				"documentURI",
-				"encoding",
-				"formatOutput",
-				"implementation",
-				"preserveWhiteSpace",
-				"resolveExternals"
+				'documentElement',
+				'documentURI',
+				'encoding',
+				'formatOutput',
+				'implementation',
+				'preserveWhiteSpace',
+				'resolveExternals'
 		);
 		if (in_array($member, $allowedMember))
 		{
@@ -159,8 +159,8 @@ class XSLTStylesheet
 		$this->clear();
 		if ($mode & self::LOAD_IMPORT)
 		{
-			$import = $this->m_dom->createElementNS(self::XSLT_NAMESPACE_URI, "import");
-			$import->setAttribute("href", $filepath);
+			$import = $this->m_dom->createElementNS(self::XSLT_NAMESPACE_URI, 'import');
+			$import->setAttribute('href', $filepath);
 			$this->setBaseURI($import, dirname(realpath($filepath)));
 		}
 		else
@@ -169,13 +169,13 @@ class XSLTStylesheet
 			//$this->m_dom->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . self::XML_NAMESPACE_PREFIX, self::XML_NAMESPACE_URI);
 
 			$xpath = $this->newXPATH($this->m_dom);
-			$queryString = self::XSLT_NAMESPACE_PREFIX . ":include|" . self::XSLT_NAMESPACE_PREFIX . ":import";
+			$queryString = self::XSLT_NAMESPACE_PREFIX . ':include|' . self::XSLT_NAMESPACE_PREFIX . ':import';
 			$result = $xpath->query($queryString);
 			foreach ($result as $node)
 			{
-				if ($node->hasAttributeNS(self::XML_NAMESPACE_URI, "base"))
+				if ($node->hasAttributeNS(self::XML_NAMESPACE_URI, 'base'))
 				{
-					$this->setBaseURI($node, $node->getAttributeNS(self::XML_NAMESPACE_URI, "base"));
+					$this->setBaseURI($node, $node->getAttributeNS(self::XML_NAMESPACE_URI, 'base'));
 				}
 				else
 				{
@@ -193,7 +193,7 @@ class XSLTStylesheet
 	{
 		$path = dirname(realpath($filename));
 		$xpath = $this->newXPATH($this->m_dom);
-		$queryString = self::XSLT_NAMESPACE_PREFIX . ":include|" . self::XSLT_NAMESPACE_PREFIX . ":import";
+		$queryString = self::XSLT_NAMESPACE_PREFIX . ':include|' . self::XSLT_NAMESPACE_PREFIX . ':import';
 		$result = $xpath->query($queryString);
 		if ($result->length)
 		{
@@ -202,38 +202,38 @@ class XSLTStylesheet
 			$result = $xpath->query($queryString);
 			foreach ($result as $node)
 			{
-				$href = $node->getAttribute("href");
+				$href = $node->getAttribute('href');
 				$base = null;
 				if ($this->hasBaseURI($node))
 				{
 					$base = $this->getBaseURI($node);
 				}
 
-				//echo ("rebase " . $base . "/" . $href . "\n");
-				//echo ("to: " . $path . "\n");
+				//echo ('rebase ' . $base . '/' . $href . '\n');
+				//echo ('to: ' . $path . '\n');
 
 				if (!$base)
 				{
 					continue;
 				}
 
-				$to = dirname(realpath($base . "/" . $href));
+				$to = dirname(realpath($base . '/' . $href));
 
 				prelativePath = ns\PathUtil::getRelative($path, $to);
-				prelativePath .= "/" . basename($href);
+				prelativePath .= '/' . basename($href);
 
-				//echo ("relative: " . prelativePath . "\n");
-				//echo ("full: " . $path . "/" . prelativePath . "\n");
+				//echo ('relative: ' . prelativePath . '\n');
+				//echo ('full: ' . $path . '/' . prelativePath . '\n');
 
-				$node->setAttribute("href", prelativePath);
-				if ($node->hasAttributeNS(self::XML_NAMESPACE_URI, self::XML_NAMESPACE_PREFIX . ":base"))
+				$node->setAttribute('href', prelativePath);
+				if ($node->hasAttributeNS(self::XML_NAMESPACE_URI, self::XML_NAMESPACE_PREFIX . ':base'))
 				{
-					$node->removeAttributeNS(self::XML_NAMESPACE_URI, self::XML_NAMESPACE_PREFIX . ":base");
+					$node->removeAttributeNS(self::XML_NAMESPACE_URI, self::XML_NAMESPACE_PREFIX . ':base');
 				}
 
-				if ($node->hasAttributeNS(self::XML_NAMESPACE_URI, "base"))
+				if ($node->hasAttributeNS(self::XML_NAMESPACE_URI, 'base'))
 				{
-					$node->removeAttributeNS(self::XML_NAMESPACE_URI, "base");
+					$node->removeAttributeNS(self::XML_NAMESPACE_URI, 'base');
 				}
 			}
 
@@ -265,8 +265,8 @@ class XSLTStylesheet
 		{
 			if ($this->importAllowed())
 			{
-				$import = $this->m_dom->createElementNS(self::XSLT_NAMESPACE_URI, "import");
-				$import->setAttribute("href", realpath($filepath));
+				$import = $this->m_dom->createElementNS(self::XSLT_NAMESPACE_URI, 'import');
+				$import->setAttribute('href', realpath($filepath));
 				return;
 			}
 		}
@@ -287,21 +287,21 @@ class XSLTStylesheet
 	{
 		$xpath = $this->newXPATH($this->m_dom);
 		$nodeNames = array (
-				"import",
-				"include"
+				'import',
+				'include'
 		);
-		$queryString = "";
+		$queryString = '';
 		foreach ($nodeNames as $nodeName)
 		{
 			if (strlen($queryString))
 			{
-				$queryString .= "|";
+				$queryString .= '|';
 			}
-			$queryString .= self::XSLT_NAMESPACE_PREFIX . ":" . $nodeName;
+			$queryString .= self::XSLT_NAMESPACE_PREFIX . ':' . $nodeName;
 		}
-		$queryString = "count(" . $queryString . ")";
+		$queryString = 'count(' . $queryString . ')';
 
-		$a = $xpath->evaluate("count(*)", $this->m_dom->documentElement);
+		$a = $xpath->evaluate('count(*)', $this->m_dom->documentElement);
 		$c = $xpath->evaluate($queryString, $this->m_dom->documentElement);
 
 		if ($a != $c)
@@ -315,7 +315,7 @@ class XSLTStylesheet
 	private function consolidateDocument(DOMDocument &$dom, $documentDirectoryPath = null)
 	{
 		$xpath = $this->newXPATH($dom);
-		$queryString = self::XSLT_NAMESPACE_PREFIX . ":include|" . self::XSLT_NAMESPACE_PREFIX . ":import";
+		$queryString = self::XSLT_NAMESPACE_PREFIX . ':include|' . self::XSLT_NAMESPACE_PREFIX . ':import';
 		$result = $xpath->query($queryString);
 		foreach ($result as $node)
 		{
@@ -330,11 +330,11 @@ class XSLTStylesheet
 
 	private function consolidateNode(DOMDocument &$dom, $documentDirectoryPath, DOMNode $node)
 	{
-		$href = $node->getAttribute("href");
-		// echo ($node->nodeName . ": " . $documentDirectoryPath . "::" . $href . "\n");
-		$fullPath = realpath($documentDirectoryPath . "/" . $node->getAttribute("href"));
+		$href = $node->getAttribute('href');
+		// echo ($node->nodeName . ': ' . $documentDirectoryPath . '::' . $href . '\n');
+		$fullPath = realpath($documentDirectoryPath . '/' . $node->getAttribute('href'));
 
-		$dom->documentElement->insertBefore($dom->createComment($node->nodeName . ": " . $documentDirectoryPath . "/" . $href), $node);
+		$dom->documentElement->insertBefore($dom->createComment($node->nodeName . ': ' . $documentDirectoryPath . '/' . $href), $node);
 
 		if (file_exists($fullPath))
 		{
@@ -365,27 +365,27 @@ class XSLTStylesheet
 	private function newDocument()
 	{
 		$impl = new \DOMImplementation();
-		$doc = $impl->createDocument(self::XSLT_NAMESPACE_URI, self::XSLT_NAMESPACE_PREFIX . ":" . self::DOCUMENT_ROOT_ELEMENT);
+		$doc = $impl->createDocument(self::XSLT_NAMESPACE_URI, self::XSLT_NAMESPACE_PREFIX . ':' . self::DOCUMENT_ROOT_ELEMENT);
 
 		return $doc;
 	}
 
 	private function hasBaseURI($node)
 	{
-		//return $node->hetAttributeNS(self::XML_NAMESPACE_URI, "base");
-		return array_key_exists($node->getAttribute("href"), $this->m_baseURIs);
+		//return $node->hetAttributeNS(self::XML_NAMESPACE_URI, 'base');
+		return array_key_exists($node->getAttribute('href'), $this->m_baseURIs);
 	}
 
 	private function getBaseURI($node)
 	{
-		//return $node->getAttributeNS(self::XML_NAMESPACE_URI, "base");
-		return $this->m_baseURIs[$node->getAttribute("href")];
+		//return $node->getAttributeNS(self::XML_NAMESPACE_URI, 'base');
+		return $this->m_baseURIs[$node->getAttribute('href')];
 	}
 
 	private function setBaseURI($node, $base)
 	{
-		//$node->setAttributeNS(self::XML_NAMESPACE_URI, "base", $base);
-		$this->m_baseURIs[$node->getAttribute("href")] = $base;
+		//$node->setAttributeNS(self::XML_NAMESPACE_URI, 'base', $base);
+		$this->m_baseURIs[$node->getAttribute('href')] = $base;
 	}
 
 	/**
@@ -394,9 +394,9 @@ class XSLTStylesheet
 	private $m_dom;
 
 	private $m_baseURIs;
-	const XSLT_NAMESPACE_URI = "http://www.w3.org/1999/XSL/Transform";
-	const XSLT_NAMESPACE_PREFIX = "xsl";
-	const DOCUMENT_ROOT_ELEMENT = "stylesheet";
-	const XML_NAMESPACE_PREFIX = "xml";
-	const XML_NAMESPACE_URI = "http://www.w3.org/XML/1998/namespace";
+	const XSLT_NAMESPACE_URI = 'http://www.w3.org/1999/XSL/Transform';
+	const XSLT_NAMESPACE_PREFIX = 'xsl';
+	const DOCUMENT_ROOT_ELEMENT = 'stylesheet';
+	const XML_NAMESPACE_PREFIX = 'xml';
+	const XML_NAMESPACE_URI = 'http://www.w3.org/XML/1998/namespace';
 }
