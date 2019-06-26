@@ -410,5 +410,3 @@ class XSLTStylesheet
 	const XML_NAMESPACE_PREFIX = "xml";
 	const XML_NAMESPACE_URI = "http://www.w3.org/XML/1998/namespace";
 }
-
-?>
