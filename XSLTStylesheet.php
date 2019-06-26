@@ -6,16 +6,15 @@
  */
 
 /**
- *
  * @package XSLT
  */
 namespace NoreSources\XSLT;
 
 use NoreSources as ns;
-use \DOMImplementation;
-use \DOMDocument;
-use \DOMNode;
-use \DOMXPath;
+use DOMImplementation;
+use DOMDocument;
+use DOMNode;
+use DOMXPath;
 
 require_once ("xslt.php");
 require_once (NS_PHP_CORE_PATH . "/files.php");
@@ -25,19 +24,40 @@ require_once (NS_PHP_CORE_PATH . "/files.php");
  */
 class XSLTStylesheet
 {
-	const DOCUMENT_ROOT_ELEMENT = "stylesheet";
-	const MODE_IMPORT = 1;
-	const MODE_REPLACE_EXISTING = 2;
-	const MODE_KEEP_EXISTING = 3;
-	const XML_NAMESPACE_PREFIX = "xml";
-	const XML_NAMESPACE_URI = "http://www.w3.org/XML/1998/namespace";
+	/**
+	 * XSLT content loading mode.
+	 *
+	 * Use a &lt;xsl:import&gt; node to append XSLT content to the XSLTStylesheet DOM document
+	 * @var integer
+	 */
+	const LOAD_IMPORT = 1;
 
 	/**
+	 * XSLT content loading mode.
 	 *
+	 * When a conflict occurs between an existing XSL node and one beeing added,
+	 * the existing node is replaced by the new one.
+	 *
+	 * @var integer
+	 */
+	const LOAD_REPLACE_EXISTING = 2;
+
+	/**
+	 * XSLT content loading mode.
+	 *
+	 * When a conflict occurs between an existing XSL node and one beeing added,
+	 * the new node is ignored.
+	 *
+	 * @var integer
+	 */
+	const LOAD_KEEP_EXISTING = 3;
+
+	/**
+	 * Construct a new XSLTStylesheet
 	 */
 	public function __construct()
 	{
-		$this->m_baseURIs = array();
+		$this->m_baseURIs = array ();
 		$this->clear();
 	}
 
@@ -50,37 +70,34 @@ class XSLTStylesheet
 	}
 
 	/**
-	 */
-	
-	/**
 	 * Call method of the inner DOMDocument if allowed
 	 *
-	 * @param string $method        	
-	 * @param array $args        	
+	 * @param string $method
+	 * @param array $args
 	 * @throws \BadMethodCallException
 	 * @return mixed
 	 */
 	public function __call($method, $args)
 	{
 		$allowedMethods = array (
-				"saveXML" 
+				"saveXML"
 		);
-		
+
 		if (in_array($method, $allowedMethods))
 		{
 			return call_user_func_array(array (
 					$this->m_dom,
-					$method 
+					$method
 			), $args);
 		}
-		
-		throw new \BadMethodCallException($method);
+
+		throw new \BadMethodCallException($method . ' does not exists or is not allowed');
 	}
 
 	/**
 	 * Get member of the inner DOMDocument if allowed
 	 *
-	 * @param string $member        	
+	 * @param string $member
 	 * @return mixed
 	 * @throws \InvalidArgumentException
 	 */
@@ -93,14 +110,14 @@ class XSLTStylesheet
 				"formatOutput",
 				"implementation",
 				"preserveWhiteSpace",
-				"resolveExternals" 
+				"resolveExternals"
 		);
 		if (in_array($member, $allowedMember))
 		{
 			return $this->m_dom->$member;
 		}
-		
-		throw new \InvalidArgumentException($member);
+
+		throw new \InvalidArgumentException($member . ' property does not exists or is not allowed');
 	}
 
 	/**
@@ -112,7 +129,6 @@ class XSLTStylesheet
 	}
 
 	/**
-	 *
 	 * @return \DOMDocument
 	 */
 	public function dom()
@@ -120,6 +136,9 @@ class XSLTStylesheet
 		return $this->m_dom;
 	}
 
+	/**
+	 * Consolidate XSLT stylesheet by replacing all &lt;xsl:import&gt; nodes by the content of the referenced document
+	 */
 	public function consolidate()
 	{
 		$this->consolidateDocument($this->m_dom, null);
@@ -130,15 +149,18 @@ class XSLTStylesheet
 	 *
 	 * The default behavior is similar to DOMDocument::load()
 	 *
-	 * @param string $filepath
-	 *        	XSLT stylesheet to load
-	 * @param integer $mode
-	 *        	Load mode
+	 * @param string $filepath XSLT stylesheet to load
+	 * @param integer $mode Load mode. Must be one of
+	 *        <ul>
+	 *        <li>XSLTStylesheet::LOAD_IMPORT</li>
+	 *        <li>XSLTStylesheet::LOAD_REPLACE_EXISTING</li>
+	 *        <li>XSLTStylesheet::LOAD_KEEP_EXISTING</li>
+	 *        </ul>
 	 */
-	public function load($filepath, $mode = self::MODE_REPLACE_EXISTING)
+	public function load($filepath, $mode = self::LOAD_REPLACE_EXISTING)
 	{
 		$this->clear();
-		if ($mode & self::MODE_IMPORT)
+		if ($mode & self::LOAD_IMPORT)
 		{
 			$import = $this->m_dom->createElementNS(XSLT_NAMESPACE_URI, "import");
 			$import->setAttribute("href", $filepath);
@@ -148,7 +170,7 @@ class XSLTStylesheet
 		{
 			$this->m_dom->load($filepath);
 			//$this->m_dom->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . self::XML_NAMESPACE_PREFIX, self::XML_NAMESPACE_URI);
-			
+
 			$xpath = $this->newXPATH($this->m_dom);
 			$queryString = self::XSLT_NAMESPACE_PREFIX . ":include|" . self::XSLT_NAMESPACE_PREFIX . ":import";
 			$result = $xpath->query($queryString);
@@ -158,7 +180,7 @@ class XSLTStylesheet
 				{
 					$this->setBaseURI($node, $node->getAttributeNS(self::XML_NAMESPACE_URI, "base"));
 				}
-				else 
+				else
 				{
 					$this->setBaseURI($node, dirname(realpath($filepath)));
 				}
@@ -167,7 +189,6 @@ class XSLTStylesheet
 	}
 
 	/**
-	 *
 	 * @param string $filename Output file path
 	 * @param string $options \DOMDocument::save options
 	 */
@@ -190,15 +211,15 @@ class XSLTStylesheet
 				{
 					$base = $this->getBaseURI($node);
 				}
-				
+
 				//echo ("rebase " . $base . "/" . $href . "\n");
 				//echo ("to: " . $path . "\n");
-				
+
 				if (!$base)
 				{
 					continue;
 				}
-				
+
 				$to = dirname(realpath($base . "/" . $href));
 
 				//$relativepath = ns\file_relativepath($to, $path);
@@ -213,13 +234,13 @@ class XSLTStylesheet
 				{
 					$node->removeAttributeNS(self::XML_NAMESPACE_URI, self::XML_NAMESPACE_PREFIX . ":base");
 				}
-				
+
 				if ($node->hasAttributeNS(self::XML_NAMESPACE_URI, "base"))
 				{
 					$node->removeAttributeNS(self::XML_NAMESPACE_URI, "base");
 				}
 			}
-			
+
 			return $dom->save($filename, $options);
 		}
 		else
@@ -231,17 +252,20 @@ class XSLTStylesheet
 	/**
 	 * Append another stylesheet resource
 	 *
-	 * @param string $filepath
-	 *        	XSLT stylesheet to load
-	 * @param integer $mode
-	 *        	Load mode
-	 *        	
-	 *        	@note MODE_IMPORT mode can't be used if anything other than import and include nodes
+	 * @param string $filepath XSLT stylesheet to load
+	 * @param integer $mode Load mode
+	 * <ul>
+	 * 	<li>XSLTStylesheet::LOAD_IMPORT</li>
+	 * <li>XSLTStylesheet::LOAD_REPLACE_EXISTING</li>
+	 * <li>XSLTStylesheet::LOAD_KEEP_EXISTING</li>
+	 * </ul>
+	 *       
+	 *        	@note LOAD_IMPORT mode can't be used if anything other than import and include nodes
 	 *        	is present in the current stylesheet
 	 */
-	public function append($filepath, $mode = self::MODE_IMPORT)
+	public function append($filepath, $mode = self::LOAD_REPLACE_EXISTING)
 	{
-		if (($mode == self::MODE_IMPORT))
+		if (($mode == self::LOAD_IMPORT))
 		{
 			if ($this->importAllowed())
 			{
@@ -250,11 +274,11 @@ class XSLTStylesheet
 				return;
 			}
 		}
-		
+
 		$dom = $this->newDocument();
 		$dom->load($filepath);
 		//$dom->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . self::XML_NAMESPACE_PREFIX, self::XML_NAMESPACE_URI);
-		
+
 		$this->consolidateDocument($dom, dirname(realpath($filepath)));
 		foreach ($dom->documentElement->childNodes as $n)
 		{
@@ -263,12 +287,12 @@ class XSLTStylesheet
 		}
 	}
 
-	public function importAllowed()
+	private function importAllowed()
 	{
 		$xpath = $this->newXPATH($this->m_dom);
 		$nodeNames = array (
 				"import",
-				"include" 
+				"include"
 		);
 		$queryString = "";
 		foreach ($nodeNames as $nodeName)
@@ -277,19 +301,18 @@ class XSLTStylesheet
 			{
 				$queryString .= "|";
 			}
-			
 			$queryString .= self::XSLT_NAMESPACE_PREFIX . ":" . $nodeName;
 		}
 		$queryString = "count(" . $queryString . ")";
-		
+
 		$a = $xpath->evaluate("count(*)", $this->m_dom->documentElement);
 		$c = $xpath->evaluate($queryString, $this->m_dom->documentElement);
-		
+
 		if ($a != $c)
 		{
 			return false;
 		}
-		
+
 		return true;
 	}
 
@@ -314,15 +337,15 @@ class XSLTStylesheet
 		$href = $node->getAttribute("href");
 		// echo ($node->nodeName . ": " . $documentDirectoryPath . "::" . $href . "\n");
 		$fullPath = realpath($documentDirectoryPath . "/" . $node->getAttribute("href"));
-		
+
 		$dom->documentElement->insertBefore($dom->createComment($node->nodeName . ": " . $documentDirectoryPath . "/" . $href), $node);
-		
+
 		if (file_exists($fullPath))
 		{
 			$sub = $this->newDocument();
 			$sub->load($fullPath);
 			//$dom->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . self::XML_NAMESPACE_PREFIX, self::XML_NAMESPACE_URI);
-			
+
 			$this->consolidateDocument($sub, dirname($fullPath));
 			foreach ($sub->documentElement->childNodes as $n)
 			{
@@ -331,9 +354,8 @@ class XSLTStylesheet
 			}
 		}
 		else
-		{
-		}
-		
+		{}
+
 		$node->parentNode->removeChild($node);
 	}
 
@@ -349,22 +371,22 @@ class XSLTStylesheet
 		$impl = new \DOMImplementation();
 		$doc = $impl->createDocument(XSLT_NAMESPACE_URI, self::XSLT_NAMESPACE_PREFIX . ":" . self::DOCUMENT_ROOT_ELEMENT);
 		//$doc->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . self::XML_NAMESPACE_PREFIX, self::XML_NAMESPACE_URI);
-		
+
 		return $doc;
 	}
 
 	private function hasBaseURI($node)
 	{
 		//return $node->hetAttributeNS(self::XML_NAMESPACE_URI, "base");
-		return array_key_exists($node->getAttribute("href"), $this->m_baseURIs);	
+		return array_key_exists($node->getAttribute("href"), $this->m_baseURIs);
 	}
-	
+
 	private function getBaseURI($node)
 	{
 		//return $node->getAttributeNS(self::XML_NAMESPACE_URI, "base");
 		return $this->m_baseURIs[$node->getAttribute("href")];
 	}
-	
+
 	private function setBaseURI($node, $base)
 	{
 		//$node->setAttributeNS(self::XML_NAMESPACE_URI, "base", $base);
@@ -372,11 +394,10 @@ class XSLTStylesheet
 	}
 
 	/**
-	 *
 	 * @var \DOMDocument XSLT stylesheet DOM
 	 */
 	private $m_dom;
-	
+
 	private $m_baseURIs;
 	
 	/**
@@ -384,6 +405,10 @@ class XSLTStylesheet
 	 * @var string
 	 */
 	const XSLT_NAMESPACE_PREFIX = "xsl";
+
+	const DOCUMENT_ROOT_ELEMENT = "stylesheet";
+	const XML_NAMESPACE_PREFIX = "xml";
+	const XML_NAMESPACE_URI = "http://www.w3.org/XML/1998/namespace";
 }
 
 ?>
