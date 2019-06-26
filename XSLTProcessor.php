@@ -10,8 +10,6 @@
  */
 namespace NoreSources\XSLT;
 
-require_once ("xslt.php");
-
 /**
  * Extension of the PHP XSLTProcessor class
  */

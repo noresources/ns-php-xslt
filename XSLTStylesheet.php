@@ -16,9 +16,6 @@ use DOMDocument;
 use DOMNode;
 use DOMXPath;
 
-require_once ("xslt.php");
-require_once (NS_PHP_CORE_PATH . "/files.php");
-
 /**
  * XSLT Stylesheet
  */
@@ -222,14 +219,13 @@ class XSLTStylesheet
 
 				$to = dirname(realpath($base . "/" . $href));
 
-				//$relativepath = ns\file_relativepath($to, $path);
-				$relativepath = ns\file_travelpath($path, $to);
-				$relativepath .= "/" . basename($href);
+				prelativePath = ns\PathUtil::getRelative($path, $to);
+				prelativePath .= "/" . basename($href);
 
-				//echo ("relative: " . $relativepath . "\n");
-				//echo ("full: " . $path . "/" . $relativepath . "\n");
+				//echo ("relative: " . prelativePath . "\n");
+				//echo ("full: " . $path . "/" . prelativePath . "\n");
 
-				$node->setAttribute("href", $relativepath);
+				$node->setAttribute("href", prelativePath);
 				if ($node->hasAttributeNS(self::XML_NAMESPACE_URI, self::XML_NAMESPACE_PREFIX . ":base"))
 				{
 					$node->removeAttributeNS(self::XML_NAMESPACE_URI, self::XML_NAMESPACE_PREFIX . ":base");
