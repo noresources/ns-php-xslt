@@ -33,9 +33,9 @@ class XSLTProcessor
 		else
 		{
 			$impl = new \DOMImplementation();
-			$this->xsl = $impl->createDocument(XSLT_NAMESPACE_URI, null);
-			$root = $this->xsl->createElementNS(XSLT_NAMESPACE_URI, XSLT_NAMESPACE_PREFIX . ":stylesheet");
-			$root->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . XSLT_NAMESPACE_PREFIX, XSLT_NAMESPACE_URI);
+			$this->xsl = $impl->createDocument(self::XSLT_NAMESPACE_URI, null);
+			$root = $this->xsl->createElementNS(self::XSLT_NAMESPACE_URI, self::XSLT_NAMESPACE_PREFIX . ":stylesheet");
+			$root->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . self::XSLT_NAMESPACE_PREFIX, self::XSLT_NAMESPACE_URI);
 			$root->setAttribute("version", "1.0");
 			$this->xsl->appendChild($root);
 			$this->xslFirstTemplateNode = null;
@@ -53,7 +53,7 @@ class XSLTProcessor
 		$this->xsl = $node;
 		
 		$xpath = new \DOMXPath($this->xsl);
-		$xpath->registerNamespace(XSLT_NAMESPACE_PREFIX, XSLT_NAMESPACE_URI);
+		$xpath->registerNamespace(self::XSLT_NAMESPACE_PREFIX, self::XSLT_NAMESPACE_URI);
 		
 		$res = $xpath->query("xsl:template[1]", $this->xsl->documentElement);
 		if ($res->length)
@@ -70,7 +70,7 @@ class XSLTProcessor
 	{
 		if ($useImport)
 		{
-			$import = $this->xsl->createElementNS(XSLT_NAMESPACE_URI, "import");
+			$import = $this->xsl->createElementNS(self::XSLT_NAMESPACE_URI, "import");
 			$import->setAttribute("href", $filepath);
 			if ($this->xslFirstTemplateNode)
 			{
@@ -86,7 +86,7 @@ class XSLTProcessor
 			$doc = new DOMDocument();
 			$doc->load($filepath);
 			$xpath = new \DOMXPath($doc);
-			$xpath->registerNamespace(XSLT_NAMESPACE_PREFIX, XSLT_NAMESPACE_URI);
+			$xpath->registerNamespace(self::XSLT_NAMESPACE_PREFIX, self::XSLT_NAMESPACE_URI);
 			$dirname = dirname(realpath($filepath));
 			
 			$xslXPath = new \DOMXPath($this->xsl);
@@ -218,6 +218,16 @@ class XSLTProcessor
 	 * @var \XSLTProcessor
 	 */
 	private $processor;
-}
 
-?>
+	/**
+	 * Location of the XSLT structure
+	 * @var string
+	 */
+	const XSLT_NAMESPACE_URI = "http://www.w3.org/1999/XSL/Transform";
+	
+	/**
+	 * Default namespace used for XSLT stylesheets
+	 * @var string
+	 */
+	const XSLT_NAMESPACE_PREFIX = "xsl";
+}

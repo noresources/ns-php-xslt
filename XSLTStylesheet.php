@@ -150,7 +150,7 @@ class XSLTStylesheet
 			//$this->m_dom->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . self::XML_NAMESPACE_PREFIX, self::XML_NAMESPACE_URI);
 			
 			$xpath = $this->newXPATH($this->m_dom);
-			$queryString = XSLT_NAMESPACE_PREFIX . ":include|" . XSLT_NAMESPACE_PREFIX . ":import";
+			$queryString = self::XSLT_NAMESPACE_PREFIX . ":include|" . self::XSLT_NAMESPACE_PREFIX . ":import";
 			$result = $xpath->query($queryString);
 			foreach ($result as $node)
 			{
@@ -175,7 +175,7 @@ class XSLTStylesheet
 	{
 		$path = dirname(realpath($filename));
 		$xpath = $this->newXPATH($this->m_dom);
-		$queryString = XSLT_NAMESPACE_PREFIX . ":include|" . XSLT_NAMESPACE_PREFIX . ":import";
+		$queryString = self::XSLT_NAMESPACE_PREFIX . ":include|" . self::XSLT_NAMESPACE_PREFIX . ":import";
 		$result = $xpath->query($queryString);
 		if ($result->length)
 		{
@@ -278,7 +278,7 @@ class XSLTStylesheet
 				$queryString .= "|";
 			}
 			
-			$queryString .= XSLT_NAMESPACE_PREFIX . ":" . $nodeName;
+			$queryString .= self::XSLT_NAMESPACE_PREFIX . ":" . $nodeName;
 		}
 		$queryString = "count(" . $queryString . ")";
 		
@@ -296,7 +296,7 @@ class XSLTStylesheet
 	private function consolidateDocument(DOMDocument &$dom, $documentDirectoryPath = null)
 	{
 		$xpath = $this->newXPATH($dom);
-		$queryString = XSLT_NAMESPACE_PREFIX . ":include|" . XSLT_NAMESPACE_PREFIX . ":import";
+		$queryString = self::XSLT_NAMESPACE_PREFIX . ":include|" . self::XSLT_NAMESPACE_PREFIX . ":import";
 		$result = $xpath->query($queryString);
 		foreach ($result as $node)
 		{
@@ -340,14 +340,14 @@ class XSLTStylesheet
 	private function newXPATH(DOMDocument &$dom)
 	{
 		$xpath = new DOMXPath($dom);
-		$xpath->registerNamespace(XSLT_NAMESPACE_PREFIX, XSLT_NAMESPACE_URI);
+		$xpath->registerNamespace(self::XSLT_NAMESPACE_PREFIX, XSLT_NAMESPACE_URI);
 		return $xpath;
 	}
 
 	private function newDocument()
 	{
 		$impl = new \DOMImplementation();
-		$doc = $impl->createDocument(XSLT_NAMESPACE_URI, XSLT_NAMESPACE_PREFIX . ":" . self::DOCUMENT_ROOT_ELEMENT);
+		$doc = $impl->createDocument(XSLT_NAMESPACE_URI, self::XSLT_NAMESPACE_PREFIX . ":" . self::DOCUMENT_ROOT_ELEMENT);
 		//$doc->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . self::XML_NAMESPACE_PREFIX, self::XML_NAMESPACE_URI);
 		
 		return $doc;
@@ -378,6 +378,12 @@ class XSLTStylesheet
 	private $m_dom;
 	
 	private $m_baseURIs;
+	
+	/**
+	 * Default namespace used for XSLT stylesheets
+	 * @var string
+	 */
+	const XSLT_NAMESPACE_PREFIX = "xsl";
 }
 
 ?>
