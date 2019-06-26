@@ -11,9 +11,6 @@
  */
 namespace NoreSources\XSLT;
 
-use \DOMDocument;
-use \DOMNode;
-
 require_once ("xslt.php");
 
 /**
@@ -83,7 +80,7 @@ class XSLTProcessor
 		}
 		else
 		{
-			$doc = new DOMDocument();
+			$doc = new \DOMDocument();
 			$doc->load($filepath);
 			$xpath = new \DOMXPath($doc);
 			$xpath->registerNamespace(self::XSLT_NAMESPACE_PREFIX, self::XSLT_NAMESPACE_URI);
@@ -178,8 +175,8 @@ class XSLTProcessor
 
 	/**
 	 *
-	 * @param DOMNode $nodes        	
-	 * @return DOMDocument
+	 * @param \DOMNode $nodes        	
+	 * @return \DOMDocument
 	 */
 	public function transformToDoc(DOMNode $nodes)
 	{
@@ -189,7 +186,7 @@ class XSLTProcessor
 
 	/**
 	 *
-	 * @param DOMNode $nodes        	
+	 * @param \DOMNode $nodes        	
 	 * @return string
 	 */
 	public function transformToXML(DOMNode $nodes)
@@ -205,7 +202,7 @@ class XSLTProcessor
 
 	/**
 	 *
-	 * @var DOMDocument
+	 * @var \DOMDocument
 	 */
 	private $xsl;
 
