@@ -162,7 +162,7 @@ class XSLTStylesheet
 		$this->clear();
 		if ($mode & self::LOAD_IMPORT)
 		{
-			$import = $this->m_dom->createElementNS(XSLT_NAMESPACE_URI, "import");
+			$import = $this->m_dom->createElementNS(self::XSLT_NAMESPACE_URI, "import");
 			$import->setAttribute("href", $filepath);
 			$this->setBaseURI($import, dirname(realpath($filepath)));
 		}
@@ -254,11 +254,11 @@ class XSLTStylesheet
 	 *
 	 * @param string $filepath XSLT stylesheet to load
 	 * @param integer $mode Load mode
-	 * <ul>
-	 * 	<li>XSLTStylesheet::LOAD_IMPORT</li>
-	 * <li>XSLTStylesheet::LOAD_REPLACE_EXISTING</li>
-	 * <li>XSLTStylesheet::LOAD_KEEP_EXISTING</li>
-	 * </ul>
+	 *        <ul>
+	 *        <li>XSLTStylesheet::LOAD_IMPORT</li>
+	 *        <li>XSLTStylesheet::LOAD_REPLACE_EXISTING</li>
+	 *        <li>XSLTStylesheet::LOAD_KEEP_EXISTING</li>
+	 *        </ul>
 	 *       
 	 *        	@note LOAD_IMPORT mode can't be used if anything other than import and include nodes
 	 *        	is present in the current stylesheet
@@ -269,7 +269,7 @@ class XSLTStylesheet
 		{
 			if ($this->importAllowed())
 			{
-				$import = $this->m_dom->createElementNS(XSLT_NAMESPACE_URI, "import");
+				$import = $this->m_dom->createElementNS(self::XSLT_NAMESPACE_URI, "import");
 				$import->setAttribute("href", realpath($filepath));
 				return;
 			}
@@ -362,15 +362,14 @@ class XSLTStylesheet
 	private function newXPATH(DOMDocument &$dom)
 	{
 		$xpath = new DOMXPath($dom);
-		$xpath->registerNamespace(self::XSLT_NAMESPACE_PREFIX, XSLT_NAMESPACE_URI);
+		$xpath->registerNamespace(self::XSLT_NAMESPACE_PREFIX, self::XSLT_NAMESPACE_URI);
 		return $xpath;
 	}
 
 	private function newDocument()
 	{
 		$impl = new \DOMImplementation();
-		$doc = $impl->createDocument(XSLT_NAMESPACE_URI, self::XSLT_NAMESPACE_PREFIX . ":" . self::DOCUMENT_ROOT_ELEMENT);
-		//$doc->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . self::XML_NAMESPACE_PREFIX, self::XML_NAMESPACE_URI);
+		$doc = $impl->createDocument(self::XSLT_NAMESPACE_URI, self::XSLT_NAMESPACE_PREFIX . ":" . self::DOCUMENT_ROOT_ELEMENT);
 
 		return $doc;
 	}
@@ -399,13 +398,8 @@ class XSLTStylesheet
 	private $m_dom;
 
 	private $m_baseURIs;
-	
-	/**
-	 * Default namespace used for XSLT stylesheets
-	 * @var string
-	 */
+	const XSLT_NAMESPACE_URI = "http://www.w3.org/1999/XSL/Transform";
 	const XSLT_NAMESPACE_PREFIX = "xsl";
-
 	const DOCUMENT_ROOT_ELEMENT = "stylesheet";
 	const XML_NAMESPACE_PREFIX = "xml";
 	const XML_NAMESPACE_URI = "http://www.w3.org/XML/1998/namespace";

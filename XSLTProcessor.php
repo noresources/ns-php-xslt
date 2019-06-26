@@ -6,7 +6,6 @@
  */
 
 /**
- *
  * @package XSLT
  */
 namespace NoreSources\XSLT;
@@ -22,7 +21,7 @@ class XSLTProcessor
 	public function __construct($filepath = null)
 	{
 		$this->processor = new \XSLTProcessor();
-		
+
 		if (file_exists($filepath))
 		{
 			$this->importStylesheet($filepath);
@@ -42,26 +41,26 @@ class XSLTProcessor
 	/**
 	 * Override currently imported stylesheets
 	 *
-	 * @param \DOMNode $node        	
+	 * @param \DOMNode $node
 	 */
 	public function importStylesheet(\DOMNode $node)
 	{
 		$this->xslFirstTemplateNode = null;
 		$this->xsl = $node;
-		
+
 		$xpath = new \DOMXPath($this->xsl);
 		$xpath->registerNamespace(self::XSLT_NAMESPACE_PREFIX, self::XSLT_NAMESPACE_URI);
-		
+
 		$res = $xpath->query("xsl:template[1]", $this->xsl->documentElement);
 		if ($res->length)
 		{
 			$this->xslFirstTemplateNode = $res->item(0);
 		}
 	}
-	
+
 	/**
 	 * Append stylesheet elements
-	 * @param string $filepath        	
+	 * @param string $filepath
 	 */
 	public function appendStylesheet($filepath, $useImport = false)
 	{
@@ -85,15 +84,15 @@ class XSLTProcessor
 			$xpath = new \DOMXPath($doc);
 			$xpath->registerNamespace(self::XSLT_NAMESPACE_PREFIX, self::XSLT_NAMESPACE_URI);
 			$dirname = dirname(realpath($filepath));
-			
+
 			$xslXPath = new \DOMXPath($this->xsl);
 			$registeredNamespaces = $xslXPath->query("namespace::*", $this->xsl->documentElement);
-			
+
 			$res = $xpath->query("namespace::*", $doc->documentElement);
 			foreach ($res as $n)
 			{
 				$p = (strlen($n->prefix)) ? ":" . $n->prefix : "";
-				
+
 				$skip = false;
 				foreach ($registeredNamespaces as $ns)
 				{
@@ -103,15 +102,15 @@ class XSLTProcessor
 						break;
 					}
 				}
-				
+
 				if ($skip)
 				{
 					continue;
 				}
-				
+
 				$this->xsl->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns' . $p, $n->nodeValue);
 			}
-			
+
 			$res = $xpath->query("xsl:import|xsl:include", $doc->documentElement);
 			foreach ($res as $n)
 			{
@@ -124,11 +123,11 @@ class XSLTProcessor
 				{
 					$this->xsl->documentElement->appendChild($n);
 				}
-				
+
 				$href = $dirname . "/" . $n->getAttribute("href");
 				$n->setAttribute("href", $href);
 			}
-			
+
 			$res = $xpath->query("xsl:variable|xsl:param", $doc->documentElement);
 			foreach ($res as $n)
 			{
@@ -142,14 +141,14 @@ class XSLTProcessor
 					$this->xsl->documentElement->appendChild($n);
 				}
 			}
-			
+
 			$res = $xpath->query("xsl:template", $doc->documentElement);
 			foreach ($res as $n)
 			{
 				$n = $this->xsl->importNode($n, true);
 				$this->xsl->documentElement->appendChild($n);
 			}
-			
+
 			// Set or replace output mode
 			$res = $xpath->query("xsl:output", $doc->documentElement);
 			if ($res->item(0))
@@ -167,15 +166,14 @@ class XSLTProcessor
 				{
 					$this->xsl->documentElement->appendChild($n);
 				}
-				
+
 				$this->xslOutputNode = $n;
 			}
 		}
 	}
 
 	/**
-	 *
-	 * @param \DOMNode $nodes        	
+	 * @param \DOMNode $nodes
 	 * @return \DOMDocument
 	 */
 	public function transformToDoc(DOMNode $nodes)
@@ -185,8 +183,7 @@ class XSLTProcessor
 	}
 
 	/**
-	 *
-	 * @param \DOMNode $nodes        	
+	 * @param \DOMNode $nodes
 	 * @return string
 	 */
 	public function transformToXML(DOMNode $nodes)
@@ -201,7 +198,6 @@ class XSLTProcessor
 	}
 
 	/**
-	 *
 	 * @var \DOMDocument
 	 */
 	private $xsl;
@@ -211,7 +207,6 @@ class XSLTProcessor
 	private $xslOutputNode;
 
 	/**
-	 *
 	 * @var \XSLTProcessor
 	 */
 	private $processor;
@@ -221,7 +216,7 @@ class XSLTProcessor
 	 * @var string
 	 */
 	const XSLT_NAMESPACE_URI = "http://www.w3.org/1999/XSL/Transform";
-	
+
 	/**
 	 * Default namespace used for XSLT stylesheets
 	 * @var string
