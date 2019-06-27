@@ -219,13 +219,13 @@ class XSLTStylesheet
 
 				$to = dirname(realpath($base . '/' . $href));
 
-				prelativePath = ns\PathUtil::getRelative($path, $to);
-				prelativePath .= '/' . basename($href);
+				$relativePath = ns\PathUtil::getRelative($path, $to);
+				$relativePath .= '/' . basename($href);
 
-				//echo ('relative: ' . prelativePath . '\n');
-				//echo ('full: ' . $path . '/' . prelativePath . '\n');
+				//echo ('relative: ' . $relativePath . '\n');
+				//echo ('full: ' . $path . '/' . $relativePath . '\n');
 
-				$node->setAttribute('href', prelativePath);
+				$node->setAttribute('href', $relativePath);
 				if ($node->hasAttributeNS(self::XML_NAMESPACE_URI, self::XML_NAMESPACE_PREFIX . ':base'))
 				{
 					$node->removeAttributeNS(self::XML_NAMESPACE_URI, self::XML_NAMESPACE_PREFIX . ':base');
