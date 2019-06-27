@@ -15,6 +15,11 @@
 	"support": {
 		"issues": "https://github.com/noresources/ns-php-xslt/issues"
 	},
+	"autoload": {
+		"psr-4": {
+			"NoreSources\\XSLT\\": "./"
+		}
+	},
 	"repositories": [
 		{
 			"type": "git",
