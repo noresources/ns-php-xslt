@@ -1,0 +1,47 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "2b2bc371d3cc9e35736ef827d5295f44",
+    "packages": [
+        {
+            "name": "noresources/ns-php-core",
+            "version": "2.0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/noresources/ns-php-core",
+                "reference": "c242f2b7879a9874a0ab2c073a3bd0822c2f0dc4"
+            },
+            "type": "library",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Renaud Guillard",
+                    "email": "dev@nore.fr",
+                    "role": "lead"
+                }
+            ],
+            "description": "Utility class library for PHP",
+            "support": {
+                "issues": "https://github.com/noresources/ns-php-core/issues"
+            },
+            "time": "2019-06-27T21:05:37+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": "^5.4",
+        "ext-dom": "*",
+        "ext-xsl": "*"
+    },
+    "platform-dev": []
+}
