@@ -166,7 +166,6 @@ class XSLTStylesheet
 		else
 		{
 			$this->m_dom->load($filepath);
-			//$this->m_dom->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . self::XML_NAMESPACE_PREFIX, self::XML_NAMESPACE_URI);
 
 			$xpath = $this->newXPATH($this->m_dom);
 			$queryString = self::XSLT_NAMESPACE_PREFIX . ':include|' . self::XSLT_NAMESPACE_PREFIX . ':import';
@@ -209,9 +208,6 @@ class XSLTStylesheet
 					$base = $this->getBaseURI($node);
 				}
 
-				//echo ('rebase ' . $base . '/' . $href . '\n');
-				//echo ('to: ' . $path . '\n');
-
 				if (!$base)
 				{
 					continue;
@@ -221,9 +217,6 @@ class XSLTStylesheet
 
 				$relativePath = ns\PathUtil::getRelative($path, $to);
 				$relativePath .= '/' . basename($href);
-
-				//echo ('relative: ' . $relativePath . '\n');
-				//echo ('full: ' . $path . '/' . $relativePath . '\n');
 
 				$node->setAttribute('href', $relativePath);
 				if ($node->hasAttributeNS(self::XML_NAMESPACE_URI, self::XML_NAMESPACE_PREFIX . ':base'))
@@ -273,7 +266,6 @@ class XSLTStylesheet
 
 		$dom = $this->newDocument();
 		$dom->load($filepath);
-		//$dom->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . self::XML_NAMESPACE_PREFIX, self::XML_NAMESPACE_URI);
 
 		$this->consolidateDocument($dom, dirname(realpath($filepath)));
 		foreach ($dom->documentElement->childNodes as $n)
@@ -331,7 +323,6 @@ class XSLTStylesheet
 	private function consolidateNode(DOMDocument &$dom, $documentDirectoryPath, DOMNode $node)
 	{
 		$href = $node->getAttribute('href');
-		// echo ($node->nodeName . ': ' . $documentDirectoryPath . '::' . $href . '\n');
 		$fullPath = realpath($documentDirectoryPath . '/' . $node->getAttribute('href'));
 
 		$dom->documentElement->insertBefore($dom->createComment($node->nodeName . ': ' . $documentDirectoryPath . '/' . $href), $node);
@@ -340,7 +331,6 @@ class XSLTStylesheet
 		{
 			$sub = $this->newDocument();
 			$sub->load($fullPath);
-			//$dom->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:' . self::XML_NAMESPACE_PREFIX, self::XML_NAMESPACE_URI);
 
 			$this->consolidateDocument($sub, dirname($fullPath));
 			foreach ($sub->documentElement->childNodes as $n)
@@ -372,19 +362,16 @@ class XSLTStylesheet
 
 	private function hasBaseURI($node)
 	{
-		//return $node->hetAttributeNS(self::XML_NAMESPACE_URI, 'base');
 		return array_key_exists($node->getAttribute('href'), $this->m_baseURIs);
 	}
 
 	private function getBaseURI($node)
 	{
-		//return $node->getAttributeNS(self::XML_NAMESPACE_URI, 'base');
 		return $this->m_baseURIs[$node->getAttribute('href')];
 	}
 
 	private function setBaseURI($node, $base)
 	{
-		//$node->setAttributeNS(self::XML_NAMESPACE_URI, 'base', $base);
 		$this->m_baseURIs[$node->getAttribute('href')] = $base;
 	}
 
