@@ -77,7 +77,8 @@ class XSLTStylesheet
 	public function __call($method, $args)
 	{
 		$allowedMethods = array (
-				'saveXML'
+				'saveXML',
+				'xinclude'
 		);
 
 		if (in_array($method, $allowedMethods))
@@ -306,6 +307,7 @@ class XSLTStylesheet
 
 	private function consolidateDocument(DOMDocument &$dom, $documentDirectoryPath = null)
 	{
+		$dom->xinclude();
 		$xpath = $this->newXPATH($dom);
 		$queryString = self::XSLT_NAMESPACE_PREFIX . ':include|' . self::XSLT_NAMESPACE_PREFIX . ':import';
 		$result = $xpath->query($queryString);
