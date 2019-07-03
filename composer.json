@@ -10,8 +10,6 @@
 			"role": "lead"
 		}
 	],
-	"prefer-stable": false,
-	"minimum-stability": "dev",
 	"support": {
 		"issues": "https://github.com/noresources/ns-php-xslt/issues"
 	},
@@ -20,6 +18,8 @@
 			"NoreSources\\XSLT\\": "./"
 		}
 	},
+	"prefer-stable": false,
+	"minimum-stability": "dev",
 	"repositories": [
 		{
 			"type": "git",
@@ -30,6 +30,6 @@
 		"php": "^5.4",
 		"ext-dom": "*",
 		"ext-xsl": "*",
-		"noresources/ns-php-core": "^2.0"
+		"noresources/ns-php-core": "~2.0"
 	}
 }
