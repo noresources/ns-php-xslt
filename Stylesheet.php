@@ -25,9 +25,19 @@ class StylesheetException extends \Exception
 	}
 }
 
+/**
+ * XSLT stylesheet utility
+ * 
+ */
 class Stylesheet
 {
 
+	/**
+	 * Replace all XSL include and XSLT import nodes by the referenced content
+	 * @param string $filename XSLT file path
+	 * @return unknown
+	 * @return \\DOMDocument
+	 */
 	public static function consolidateFile($filename)
 	{
 		$impl = new \DOMImplementation();
@@ -36,17 +46,52 @@ class Stylesheet
 		return self::consolidateDocument($filename, dirname(realpath($filename)));
 	}
 
+	/**
+	 * @param \DOMDocument $stylesheet XSLT stylesheet document
+	 * @param unknown $documentDirectoryPath Reference path of the document
+	 * @return \\DOMDocument
+	 */
 	public static function consolidateDocument(\DOMDocument $stylesheet, $documentDirectoryPath)
 	{
 		$context = new StylesheetContext($stylesheet, $documentDirectoryPath);
 		return self::consolidateStylesheet($context);
 	}
+	
+	/**
+	 * XSLT schema namespace URL
+	 * @var string
+	 */
 	const XSLT_NAMESPACE_URI = 'http://www.w3.org/1999/XSL/Transform';
+	
+	/**
+	 * XSLT namespace prefix used internally
+	 * @var string
+	 */
 	const XSLT_NAMESPACE_PREFIX = 'xsl';
+	
+	/**
+	 * Node name of the XSLT stylesheet root element
+	 * @var string
+	 */
 	const DOCUMENT_ROOT_ELEMENT = 'stylesheet';
+	
+	/**
+	 * XML namespace prefix used internally
+	 * @var string
+	 */
 	const XML_NAMESPACE_PREFIX = 'xml';
+	
+	/**
+	 * XSM namespace URL
+	 * @var string
+	 */
 	const XML_NAMESPACE_URI = 'http://www.w3.org/XML/1998/namespace';
 
+	/**
+	 * 
+	 * @param StylesheetContext $context
+	 * @return \\DOMDocument
+	 */
 	private static function consolidateStylesheet(StylesheetContext $context)
 	{
 		$xpath = new DOMXPath($context->stylesheet);
@@ -58,6 +103,8 @@ class Stylesheet
 		{
 			self::consolidateStylesheetNode($context, $node);
 		}
+		
+		return $context->stylesheet;
 	}
 
 	private static function consolidateStylesheetNode(StylesheetContext $context, \DOMNode $node)
@@ -70,6 +117,7 @@ class Stylesheet
 			throw new StylesheetException($href . ' not found');
 		}
 		
+		// Comment to mark there was a import node here
 		$context->stylesheet->documentElement->insertBefore(
 				$context->stylesheet->createComment('merged import href="' . $href . '"'), 
 				$node);
