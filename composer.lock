@@ -12,13 +12,24 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/noresources/ns-php-core",
-                "reference": "a00b4d2aa3406750d2d97c3de9f376885c7d31f2"
+                "reference": "d407ccc0f0b53888dc2db74d2a48c7cb09d98775"
+            },
+            "require": {
+                "php": "^5.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
                     "NoreSources\\": "./"
                 }
+            },
+            "scripts": {
+                "tests": [
+                    "@php  ./vendor/bin/phpunit --bootstrap core.autoload.inc.php tests"
+                ]
             },
             "license": [
                 "MIT"
@@ -34,7 +45,7 @@
             "support": {
                 "issues": "https://github.com/noresources/ns-php-core/issues"
             },
-            "time": "2019-06-27T23:05:14+00:00"
+            "time": "2019-07-03T17:23:42+00:00"
         }
     ],
     "packages-dev": [
