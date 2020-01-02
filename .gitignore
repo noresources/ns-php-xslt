@@ -1,0 +1,10 @@
+# composer
+/vendor
+
+# Eclpse
+\.project
+\.buildpath
+\.settings
+
+# Derived data
+/tests/derived
