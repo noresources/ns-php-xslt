@@ -15,17 +15,10 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"NoreSources\\XSLT\\": "./"
+			"NoreSources\\XSLT\\": "src/"
 		}
 	},
-	"prefer-stable": false,
 	"minimum-stability": "dev",
-	"repositories": [
-		{
-			"type": "git",
-			"url": "https://github.com/noresources/ns-php-core"
-		}
-	],
 	"require": {
 		"php": ">= 5.4",
 		"ext-dom": "*",

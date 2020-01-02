@@ -4,14 +4,14 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "a44267de406fbcc8df0b3ae3bf454de2",
+    "content-hash": "9b725b72e4a2f520cc7c3bf5d35e81d9",
     "packages": [
         {
             "name": "noresources/ns-php-core",
             "version": "2.0.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://github.com/noresources/ns-php-core",
+                "url": "ssh://okami/volume1/repository/git/ns-php-core.git",
                 "reference": "8be315cb3f4c006dc4bcd35be9a731f4d4683ca0"
             },
             "require": {
