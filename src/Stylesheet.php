@@ -42,7 +42,7 @@ class Stylesheet
 		$impl = new \DOMImplementation();
 		$stylesheet = $impl->createDocument(self::XSLT_NAMESPACE_URI, self::XSLT_NAMESPACE_PREFIX . ':' . self::DOCUMENT_ROOT_ELEMENT);
 		$stylesheet->load($filename);
-		return self::consolidateDocument($filename, dirname(realpath($filename)));
+		return self::consolidateDocument($stylesheet, dirname(realpath($filename)));
 	}
 
 	/**
